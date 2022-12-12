@@ -1,0 +1,11 @@
+{
+  "name": "ManageProject",
+  "version": "1.0.0",
+  "dependencies": {
+    "mdb-react-ui-kit": "^5.0.0",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "react-router-dom": "^6.4.5"
+  }
+}

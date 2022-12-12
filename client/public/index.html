@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.1/mdb.min.css"
+            rel="stylesheet"
+    />
+    <style>
+      .gradient-custom-2 {
+        background: linear-gradient(
+                to right,
+                rgba(126, 64, 246, 1),
+                rgba(80, 139, 252, 1)
+        );
+      }
+
+      /*.mask-custom {*/
+      /*  background: rgba(24, 24, 16, 0.2);*/
+      /*  border-radius: 2em;*/
+      /*  backdrop-filter: blur(25px);*/
+      /*  border: 2px solid rgba(255, 255, 255, 0.05);*/
+      /*  background-clip: padding-box;*/
+      /*  box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);*/
+      /*}*/
+      body {
+        background-color: #fbfbfb;
+      }
+
+      @media (min-width: 992px) {
+        .sidebar {
+          height: unset!important;
+        }
+      }
+
+      /* Sidebar */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        padding: 58px 0 0;
+        width: 240px;
+        /* z-index: 600; */
+      }
+
+      .sidebar.show {
+        height: 100vh;
+      }
+
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 100%;
+        }
+      }
+
+      .sidebar .active {
+        border-radius: 5px;
+      }
+
+      .sidebar-sticky {
+        position: relative;
+        top: 0;
+        height: calc(100vh - 48px);
+        padding-top: 0.5rem;
+        overflow-x: hidden;
+        overflow-y: auto;
+        /* Scrollable contents if viewport is shorter than content. */
+      }
+    </style>
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
+</html>

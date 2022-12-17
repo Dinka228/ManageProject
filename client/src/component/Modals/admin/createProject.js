@@ -13,7 +13,7 @@ import {Dropdown, Form} from "react-bootstrap";
 import DropdownItem from "react-bootstrap/DropdownItem";
 import {Context} from "../../../index";
 import {registration} from "../../../http/userAPI";
-import {createProject} from "../../../http/projectAPI";
+import {createProject, fetchProject} from "../../../http/projectAPI";
 
 const CreateProject = ({show,onHide}) => {
     const [newProject, setNewProject] = useState({name:''})
@@ -27,6 +27,7 @@ const CreateProject = ({show,onHide}) => {
         }
         const proj = async ()=>{
             const response = await createProject(newUProject)
+            fetchProject().then(data=>projects.setProject(data))
             console.log(response)
         }
         proj()

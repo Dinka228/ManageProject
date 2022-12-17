@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     MDBBtn,
     MDBCard,
@@ -13,19 +13,31 @@ import {
 import TrItemForPersonalTasks from "./TrItemForPersonalTasks";
 import {Context} from "../../index";
 import TrItemForCustomer from "./TrItemForCustomer";
+import {createMessage, fetchOneMessage} from "../../http/messageAPI";
+import {fetchOneTask} from "../../http/taskAPI";
+import {observer} from "mobx-react-lite";
 
-const Customer = () => {
+const Customer = observer(() => {
     const {user} = useContext(Context)
     const {projects} = useContext(Context)
-    const [newIdeaMessage,setNewIdeaMessage] = useState({text:""})
-    function addNewIdeaMessage()   {
-        const newUIdeaMessage={
-            ...newIdeaMessage,id:Date.now(),creatorId:user.currUser.id,ideaId:projects.currIdea.id
+    const [newMessage,setNewMessage] = useState({text:""})
+    const [searchCheck,setSearchCheck]=useState("")
+    useEffect(()=>{
+        fetchOneTask(projects.currProject.id).then(data=>projects.setTasks(data))
+    },[])
+    function addNewMessage(){
+        const newUMessage={
+            ...newMessage
 
         }
-        console.log(newUIdeaMessage)
-        projects.ideasMessage.push(newUIdeaMessage)
-        setNewIdeaMessage({text:''})
+        const formData = new FormData()
+        formData.append('text',newUMessage.text)
+        formData.append('creatorWorkerId',user.currUser.id)
+        formData.append('gerWorkerId',user.currMessageUser.id)
+        createMessage(formData).then(data=>{
+            fetchOneMessage(user.currUser.id,user.currMessageUser.id).then(data=>projects.setMessage(data))
+        })
+        setNewMessage({text:''})
 
     }
     return (
@@ -42,10 +54,10 @@ const Customer = () => {
                                             label="Enter a task here"
                                             id="form1"
                                             type="text"
+                                            onChange={e=>{
+                                                setSearchCheck(e.target.value)
+                                            }}
                                         />
-                                    </MDBCol>
-                                    <MDBCol size="12">
-                                        <MDBBtn type="submit">Search</MDBBtn>
                                     </MDBCol>
                                 </MDBRow>
                                 <MDBTable className="mb-4">
@@ -60,7 +72,18 @@ const Customer = () => {
                                     </MDBTableHead>
                                     <MDBTableBody>
                                         {
-                                            projects.tasks.map(task=>
+                                            projects.tasks.filter(taskFilter=>{
+                                                if (searchCheck === "") {
+                                                    return taskFilter
+                                                } else if (searchCheck !== "") {
+                                                    if (taskFilter.name.startsWith(searchCheck)) {
+                                                        return taskFilter
+                                                    }
+                                                }
+                                                else{
+                                                    return taskFilter
+                                                }
+                                            }).map(task=>
                                                 <TrItemForCustomer key={task.id} task={task}/>
                                             )
 
@@ -111,9 +134,12 @@ const Customer = () => {
                                 <MDBTypography listUnStyled className="mb-0">
                                     {
                                         user.user.filter(userFilter=>{
-                                            if(userFilter.role === 'ADMIN' || +userFilter.id === +projects.currProject.curatorId){
-                                                return userFilter
+                                            if(userFilter.id !== user.currUser.id){
+                                                if(userFilter.role === 'ADMIN' || +userFilter.id === +projects.currProject.curatorId){
+                                                    return userFilter
+                                                }
                                             }
+
                                         }).map(users=>
                                             <li
                                                 className="p-2 border-bottom"
@@ -138,11 +164,62 @@ const Customer = () => {
                         </MDBCard>
 
                     </MDBCol>
+                    {
+                        user.currMessageUser.name ? <MDBCol md="6" lg="7" xl="8">
+                            <div  style={{overflow:"scroll", maxHeight:400}}>
+                                <MDBTypography listUnStyled>
+                                    <h2>{user.currMessageUser.name ? user.currMessageUser.name : <div></div>}</h2>
+                                    {
+                                        projects.messages.filter(messageFilter=>{
+                                            if(+messageFilter.creatorWorkerId === +user.currMessageUser.id || +messageFilter.gerWorkerId === +user.currMessageUser.id){
+                                                return messageFilter
+                                            }
+                                        }).map(message=>
+                                            <li className="d-flex justify-content-between mb-4">
+                                                {
+                                                    <MDBCard>
+                                                        <MDBCardHeader className="d-flex justify-content-between p-3">
+                                                            <p className="fw-bold mb-0">{user.user.filter(users=>{
+                                                                if(+users.id === +message.creatorWorkerId){
+                                                                    return users
+                                                                }
+                                                            }).map(userss => <div>{userss.name}</div>)}</p>
+                                                        </MDBCardHeader>
+                                                        <MDBCardBody>
+                                                            <p className="mb-0">
+                                                                {message.text}
+                                                            </p>
+                                                        </MDBCardBody>
+                                                    </MDBCard>
+
+                                                }
+
+                                            </li>
+                                        )
+                                    }
+
+
+                                </MDBTypography>
+                            </div>
+                            <li className="bg-white mb-3">
+                                <MDBTextArea label="Message" id="textAreaExample" rows={4}
+                                             value={newMessage.text}
+                                             onChange={e=>setNewMessage({...newMessage, text: e.target.value})}
+                                />
+                            </li>
+                            <MDBBtn color="info" rounded className="float-end" onClick={()=>{
+                                addNewMessage()
+                            }}>
+                                Send
+                            </MDBBtn>
+                        </MDBCol> : <div></div>
+                    }
+
 
                 </MDBRow>
             </MDBContainer>
         </section>
     );
-};
+});
 
 export default Customer;

@@ -24,7 +24,7 @@ const NavBar = observer(() => {
     const [showNavCentred, setShowNavCentred] = useState(false);
     const history = useHistory()
     const {user} = useContext(Context)
-    const {project} = useContext(Context)
+    const {projects} = useContext(Context)
     return (
         <Navbar bg="dark" expand="lg">
             {
@@ -33,14 +33,17 @@ const NavBar = observer(() => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto" >
-                            <Nav.Link style={{color:"white"}} onClick={()=>{
-                                history.push(PROJECTS_ROUTE)
-                            }
-                            }>Projects</Nav.Link>
-                            {/*<Nav.Link style={{color:"white"}} onClick={()=>{*/}
-                            {/*    history.push(PROFILE_ROUTE)*/}
-                            {/*}*/}
-                            {/*}>Profile</Nav.Link>*/}
+                            {
+                                user.currUser.role === 'ADMIN' ?
+                                    <Nav.Link style={{color:"white"}} onClick={()=>{
+                                        projects.setShowAdmin(true)
+                                }
+                                }>AdminPanel</Nav.Link>
+                                     :
+                                     <div></div>
+                             }
+
+
                         </Nav>
                         <Nav className="ms-auto" >
                             <Nav.Link style={{color:"white"}} onClick={()=>{
@@ -56,6 +59,6 @@ const NavBar = observer(() => {
 
         </Navbar>
     );
-});
+})
 
 export default NavBar;

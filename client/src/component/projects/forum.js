@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     MDBContainer,
     MDBRow,
@@ -15,6 +15,8 @@ import {observer} from "mobx-react-lite";
 import {Context} from "../../index";
 import {useHistory} from "react-router-dom";
 import CreateIdea from "../Modals/createIdea";
+import {createIdea, fetchIdea} from "../../http/ideaAPI";
+import {createIdeaMessage, fetchOneIdeaMessage} from "../../http/ideaMessageAPI";
 
 const Forum = observer(() => {
     const {user} = useContext(Context)
@@ -22,16 +24,24 @@ const Forum = observer(() => {
     const history = useHistory()
     const [createIdeaVisible,setCreateIdeaVisible] = useState(false)
     const [newIdeaMessage,setNewIdeaMessage] = useState({text:""})
-    function addNewIdeaMessage()   {
+    function addNewIdeaMessage(){
         const newUIdeaMessage={
             ...newIdeaMessage,id:Date.now(),creatorId:user.currUser.id,ideaId:projects.currIdea.id
 
         }
-        console.log(newUIdeaMessage)
-        projects.ideasMessage.push(newUIdeaMessage)
+        const formData = new FormData()
+        formData.append('text',newUIdeaMessage.text)
+        formData.append('ideaId',projects.currIdea.id)
+        formData.append('creatorId',user.currUser.id)
+        createIdeaMessage(formData).then(data=>{
+            fetchOneIdeaMessage(projects.currIdea.id).then(data=>projects.setIdeasMessage(data))
+        })
         setNewIdeaMessage({text:''})
 
     }
+    useEffect(()=>{
+        fetchIdea().then(data=>projects.setIdea(data))
+    },[])
     return (
         <MDBContainer fluid className="py-5" style={{ backgroundColor: "#eee" }}>
             <MDBRow>
@@ -50,6 +60,7 @@ const Forum = observer(() => {
                                             style={{ backgroundColor: "#eee" }}
                                             onClick={()=>{
                                                 projects.setCurrIdea(idea)
+                                                fetchOneIdeaMessage(projects.currIdea.id).then(data=>projects.setIdeasMessage(data))
                                             }
                                             }
 
@@ -83,12 +94,9 @@ const Forum = observer(() => {
 
                 <MDBCol md="6" lg="7" xl="8">
                     <MDBTypography listUnStyled>
+                        <h2>{projects.currIdea.name ? projects.currIdea.name : <div></div>}</h2>
                         {
-                            projects.ideasMessage.filter(messageFilter=>{
-                                if(+messageFilter.ideaId === +projects.currIdea.id){
-                                    return messageFilter
-                                }
-                            }).map(message=>
+                            projects.ideasMessage.map(message=>
                                 <li className="d-flex justify-content-between mb-4">
                                     <MDBCard>
                                         <MDBCardHeader className="d-flex justify-content-between p-3">

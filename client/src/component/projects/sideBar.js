@@ -21,11 +21,14 @@ import {
     MDBListGroupItem
 } from 'mdb-react-ui-kit';
 import {Context} from "../../index";
+import {fetchOneTask} from "../../http/taskAPI";
+import {fetchUser} from "../../http/userAPI";
 
 const SideBar = () => {
     const [showShow, setShowShow] = useState(false);
 
     const toggleShow = () => setShowShow(!showShow);
+    const {user} = useContext(Context)
     const {projects} = useContext(Context)
     return (
         <>
@@ -39,6 +42,7 @@ const SideBar = () => {
                                 projects.setProfilePage(false)
                                 projects.setDiagramPage(false)
                                 projects.setCustomer(false)
+                                fetchOneTask(projects.currProject.id).then(data=>projects.setTasks(data))
                             }}>
                                 <MDBIcon fas icon="tachometer-alt me-1" />
                                 {projects.currProject.name}
@@ -78,6 +82,8 @@ const SideBar = () => {
                                 projects.setProfilePage(false)
                                 projects.setDiagramPage(true)
                                 projects.setCustomer(false)
+                                fetchUser().then(data=>user.setUser(data))
+                                console.log()
                             }}>
                                 <MDBIcon fas icon="chart-pie me-1" />
                                 Diagrams
@@ -85,16 +91,23 @@ const SideBar = () => {
                         </MDBRipple>
 
                         <MDBRipple rippleTag='span'>
-                            <MDBListGroupItem tag='a' href='#' action className=' mt-4 border-0 border-bottom rounded'onClick={()=>{
-                                projects.setForumPage(false)
-                                projects.setProjectPage(false)
-                                projects.setProfilePage(false)
-                                projects.setDiagramPage(false)
-                                projects.setCustomer(true)
-                            }}>
-                                <MDBIcon fas icon="globe me-1" />
-                                Customer
-                            </MDBListGroupItem>
+                            {
+                                user.currUser.role === 'Customer' ||  user.currUser.role==='ADMIN' ?
+                                    <MDBListGroupItem tag='a' href='#' action className=' mt-4 border-0 border-bottom rounded'onClick={()=>{
+                                        user.setCurrentMessageUser({})
+                                        fetchOneTask(projects.currProject.id).then(data=>projects.setTasks(data))
+                                        projects.setForumPage(false)
+                                        projects.setProjectPage(false)
+                                        projects.setProfilePage(false)
+                                        projects.setDiagramPage(false)
+                                        projects.setCustomer(true)
+                                    }}>
+                                        <MDBIcon fas icon="globe me-1" />
+                                        Customer
+                                    </MDBListGroupItem>
+                                    :<div></div>
+                            }
+
                         </MDBRipple>
                     </MDBListGroup>
                 </div>

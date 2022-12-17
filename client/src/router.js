@@ -7,17 +7,14 @@ import Auth from "./page/Auth";
 import ProjectPage from "./page/ProjectPage";
 
 export const authRoutes = [
+
     {
-        path: PROFILE_ROUTE,
-        Component: Profile
+        path: LOGIN_ROUTE,
+        Component: Auth
     },
     {
         path: PROJECTS_ROUTE,
         Component: Projects
-    },
-    {
-        path: LOGIN_ROUTE,
-        Component: Auth
     },
     {
         path: PROJECTS_PAGE_ROUTE  + '/:id',
@@ -25,17 +22,14 @@ export const authRoutes = [
     }
 ]
 export const publicRoutes = [
+
     {
-        path: PROFILE_ROUTE,
-        Component: Profile
+        path: LOGIN_ROUTE,
+        Component: Auth
     },
     {
         path: PROJECTS_ROUTE,
         Component: Projects
-    },
-    {
-        path: LOGIN_ROUTE,
-        Component: Auth
     },
     {
         path: PROJECTS_PAGE_ROUTE + '/:id',

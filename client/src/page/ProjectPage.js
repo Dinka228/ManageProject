@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     MDBBadge, MDBBtn,
     MDBCard,
@@ -21,10 +21,17 @@ import PersonalBoard from "../component/projects/personalBoard";
 import {observer} from "mobx-react-lite";
 import Diagrams from "../component/projects/diagrams";
 import Customer from "../component/projects/customer";
+import CreateTask from "../component/Modals/admin/createTask";
+import {fetchProject} from "../http/projectAPI";
+import {fetchOneTask} from "../http/taskAPI";
 const ProjectPage = observer(() => {
     const {user} = useContext(Context)
     const {projects} = useContext(Context)
     const history = useHistory()
+    const [searchCheck,setSearchCheck]=useState("")
+    useEffect(()=>{
+        fetchOneTask(projects.currProject.id).then(data=>projects.setTasks(data))
+    },[])
     return (
 
         <section >
@@ -54,6 +61,15 @@ const ProjectPage = observer(() => {
                                             width="60"
                                         />
                                         <h2 className="my-4" style={{color:"black"}}>Task List</h2>
+                                        {
+                                            user.currUser.role === 'ADMIN' ? <MDBBtn onClick={()=>{
+                                                projects.setShowCreateTask(true)
+                                            }
+                                            }>
+                                                Create Task
+                                            </MDBBtn> : <div></div>
+                                        }
+
                                     </div>
                                     <MDBTable className="text-white mb-0">
                                         <MDBTableHead>
@@ -62,7 +78,15 @@ const ProjectPage = observer(() => {
                                                 <th scope="col" style={{color:"black"}}>Task</th>
                                                 <th scope="col" style={{color:"black"}}>Progress</th>
                                                 <th scope="col" style={{color:"black"}}>Priority</th>
-                                                <th scope="col" style={{color:"black"}}>Actions</th>
+                                                {
+                                                    +projects.currProject.curatorId === +user.currUser.id || user.currUser.role === 'ADMIN'
+                                                        ?
+                                                        <th scope="col" style={{color:"black"}}>Actions</th>
+                                                        :
+                                                        <div></div>
+                                                }
+
+
                                             </tr>
                                         </MDBTableHead>
                                         <MDBTableBody>
@@ -97,12 +121,6 @@ const ProjectPage = observer(() => {
                                                    value={projects.currTask.answer}
                                             />
                                         </MDBInputGroup>
-                                        <MDBInputGroup className='mb-3' textBefore='DeadLine'>
-                                            <input className='form-control' type='text'
-                                                   value={projects.currTask.date}
-                                            />
-                                        </MDBInputGroup>
-                                        <MDBBtn color={"success"}>Update</MDBBtn>
                                     </MDBCardBody>
                                 </MDBCard>
                             </MDBCol>
@@ -111,7 +129,9 @@ const ProjectPage = observer(() => {
                     </MDBRow>
                     :<div></div>
                 }
-
+            <CreateTask show={projects.showCreateTask} onHide={()=>{
+                projects.setShowCreateTask(false)
+            }}/>
             </MDBContainer>
         </section>
     );

@@ -4,6 +4,7 @@ import {MDBBadge, MDBBtn} from "mdb-react-ui-kit";
 import {Context} from "../../index";
 import {useHistory} from "react-router-dom";
 import {observer} from "mobx-react-lite";
+import {finishTask} from "../../http/taskAPI";
 
 const TrItemForTasks = observer(({task}) => {
     const {user} = useContext(Context)
@@ -53,19 +54,22 @@ const TrItemForTasks = observer(({task}) => {
 
                 </h6>
             </td>
-            <td className="align-middle">
-                <MDBBtn type="submit" color="danger">
-                    Delete
-                </MDBBtn>
-                <MDBBtn type="submit" className="ms-1" color="secondary" onClick={()=>{
-                    projects.setCurrTask(task)
-                }}>
-                    Show
-                </MDBBtn>
-                <MDBBtn type="submit" color="success" className="ms-1">
-                    Finished
-                </MDBBtn>
-            </td>
+            {
+                +projects.currProject.curatorId === +user.currUser.id || user.currUser.role === 'ADMIN' ?
+                    <td className="align-middle">
+                    <MDBBtn type="submit" className="ms-1" color="secondary" onClick={()=>{
+                        projects.setCurrTask(task)
+                    }}>
+                        Show
+                    </MDBBtn>
+                    <MDBBtn type="submit" color="success" className="ms-1" onClick={()=>{
+                        finishTask(task.id,projects.currProject.id).then(data=>projects.setTasks(data))
+                    }}>
+                        Finished
+                    </MDBBtn>
+                </td> :<div></div>
+            }
+
         </tr>
     );
 });

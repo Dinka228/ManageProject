@@ -11,43 +11,38 @@ export default class ProjectStore{
         this._customer = false
         this._showCurrProjects = false
         this._showCurrIdea = false
-        this._projects = [{id:1,name:"Project1",curatorId:3,progress:'In progress', customerId:2},
-            {id:2,name:"Project2",curatorId:1,progress:'In progress', customerId:2},
-            {id:3,name:"Project3",curatorId:4,progress:'In progress', customerId:2}]
-        this._ideas = [{id:1,name:"JavaScript",creatorId:1},
-            {id:2,name:"С++",creatorId:1}]
-        this._ideasMessage = [{id:1,text:"My idea",ideaId:1,creatorId:1},
-            {id:2,text:"My idea",ideaId:1,creatorId:2},
-            {id:3,text:"My idea",ideaId:1,creatorId:3},
-            {id:4,text:"My idea",ideaId:2,creatorId:4},
-            {id:5,text:"My idea",ideaId:2,creatorId:1},
-            {id:6,text:"My idea",ideaId:2,creatorId:2},
-            {id:7,text:"My idea",ideaId:2,creatorId:3},]
-        this._workersProject = [
-            {id:1,workerId:2,projectId:1},
-            {id:1,workerId:3,projectId:2}
-        ]
-        this._messages = [{id:1,text:"Починається опитування про Дмитро Дробинко",type:"poll",workerId:"1",to:"All",workerThatPollId:2},
-            {id:2,text:"Розпочався набір у проект: Project 1",type:"project",workerId:"2",to:"Junior",},
-            {id:3,text:"Middle",type:"default",workerId:"3",to:"Middle"},
-            {id:4,text:"Senior",type:"default",workerId:"4",to:"Senior"},
-            {id:5,text:"Middle",type:"default",workerId:"5",to:"Middle"},
-            {id:6,text:"Junior",type:"default",workerId:"6",to:"Junior"},
-            {id:7,text:"Розпочався набір у проект: Project 1",type:"default",workerId:"1",to:"All"},]
+        this._showAdmin = false
+        this._showCreateUser = false
+        this._showCreateProject = false
+        this._showCreateTask = false
+        this._projects = []
+        this._ideas = []
+        this._ideasMessage = []
+        this._workersProject = []
+        this._messages = []
         this._voices = []
         this._currProject = []
         this._currStage = []
         this._currTask = []
         this._currIdea = []
-        this._stages = [{id:1,name:'Stage 1',projectId:1,curatorId:5},
-            {id:2,name:'Stage 2',projectId:1,curatorId:3}]
-        this._tasks = [{id:1,name:'Task 1',projectId:1,stageId:1,curatorId:1, answer:"Answer1",progress:"In Progress", priority:"High priority",date:"21.12.2022"},
-            {id:2,name:'Task 2',projectId:1,stageId:1,curatorId:2, answer:"Answer2",progress:"In Progress", priority:"Low priority",date:"22.12.2022"},
-            {id:3,name:'Task 3',projectId:1,stageId:1,curatorId:3, answer:"Answer3",progress:"Complete", priority:"High priority",date:"23.12.2022"}]
+        this._stages = []
+        this._tasks = []
         makeAutoObservable(this)
     }
     setProject(project){
         this._projects = project
+    }
+    setShowCreateTask(createTask){
+        this._showCreateTask = createTask
+    }
+    setShowAdmin(admin){
+        this._showAdmin = admin
+    }
+    setShowCreateUser(newUser){
+        this._showCreateUser = newUser
+    }
+    setShowCreateProject(newProject){
+        this._showCreateProject = newProject
     }
     setStages(stages){
         this._stages = stages
@@ -111,6 +106,18 @@ export default class ProjectStore{
     }
     get voices(){
         return this._voices
+    }
+    get showCreateTask(){
+        return this._showCreateTask
+    }
+    get showAdmin(){
+        return this._showAdmin
+    }
+    get showCreateUser(){
+        return this._showCreateUser
+    }
+    get showCreateProject(){
+        return this._showCreateProject
     }
     get ideasMessage(){
         return this._ideasMessage

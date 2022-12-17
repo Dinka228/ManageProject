@@ -4,6 +4,7 @@ import {MDBBadge, MDBBtn} from "mdb-react-ui-kit";
 import {Context} from "../../index";
 import {useHistory} from "react-router-dom";
 import {observer} from "mobx-react-lite";
+import {finishTask, finishTaskUser} from "../../http/taskAPI";
 
 const TrItemForPersonalTasks = ({task}) => {
     const {user} = useContext(Context)
@@ -49,7 +50,9 @@ const TrItemForPersonalTasks = ({task}) => {
                 <span style={{color:"black"}}>{task.date}</span>
             </td>
             <td className="align-middle">
-                <MDBBtn type="submit" color="success" className="ms-1">
+                <MDBBtn type="submit" color="success" className="ms-1" onClick={()=>{
+                    finishTaskUser(task.id,user.currUser.id).then(data=>projects.setTasks(data))
+                }}>
                     Finished
                 </MDBBtn>
             </td>

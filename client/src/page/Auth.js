@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {Card, Container} from "react-bootstrap";
 import {
     MDBBtn,
@@ -13,8 +13,30 @@ import {
     MDBCheckbox
 }
     from 'mdb-react-ui-kit';
+import {login, registration} from "../http/userAPI";
+import {observer} from "mobx-react-lite";
+import {PROJECTS_ROUTE} from "../utils/consts";
+import {Context} from "../index";
+import {useHistory} from "react-router-dom";
 
-const Auth = () => {
+const Auth = observer(() => {
+    const [User, setUser] = useState({email:"",password:""})
+    const {user} = useContext(Context)
+    const history = useHistory()
+    const signIn = (e) =>{
+            const Users={
+                ...User
+
+            }
+            const log = async ()=>{
+                const response = await login(Users.email,Users.password)
+                console.log(response)
+                user.setCurrentUser(response)
+                user.setIsAuth(true)
+                history.push(PROJECTS_ROUTE)
+            }
+            log()
+    }
     return (
         <MDBContainer fluid>
 
@@ -27,15 +49,22 @@ const Auth = () => {
 
                             <div className="d-flex flex-row align-items-center mb-4">
                                 <MDBIcon fas icon="envelope me-3" size='lg'/>
-                                <MDBInput label='Your Email' id='form2' type='email'/>
+                                <MDBInput label='Your Email' id='form2' type='email'
+                                          value={User.email}
+                                          onChange={e => setUser({...User, email: e.target.value})}
+                                />
                             </div>
 
                             <div className="d-flex flex-row align-items-center mb-4">
                                 <MDBIcon fas icon="lock me-3" size='lg'/>
-                                <MDBInput label='Password' id='form3' type='password'/>
+                                <MDBInput label='Password' id='form3' type='password'
+                                          value={User.password}
+                                          onChange={e => setUser({...User, password: e.target.value})}/>
                             </div>
 
-                            <MDBBtn className='mb-4' color={"dark"} size={"lg"}>Sign in</MDBBtn>
+                            <MDBBtn className='mb-4' color={"dark"} size={"lg"} onClick={()=>{
+                                signIn()
+                            }}>Sign in</MDBBtn>
 
                         </MDBCol>
 
@@ -49,6 +78,6 @@ const Auth = () => {
 
         </MDBContainer>
     );
-};
+});
 
 export default Auth;

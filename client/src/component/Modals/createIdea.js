@@ -13,20 +13,27 @@ import {
 import {Form} from "react-bootstrap";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
+import {createTask} from "../../http/taskAPI";
+import {createIdea, fetchIdea} from "../../http/ideaAPI";
 
 
 const CreateIdea = observer(({show,onHide}) => {
     const [newIdea, setNewIdea] = useState({name:''})
     const [selectPeople,setSelectPeople] = useState({})
-    const {worker} = useContext(Context)
+    const {projects} = useContext(Context)
     const {user} = useContext(Context)
     function addNewIdea()   {
         const newUIdea={
             ...newIdea,id:Date.now(),creatorId:user.currUser.id
 
         }
-        console.log(newUIdea)
-        worker.idea.push(newUIdea)
+        const formData = new FormData()
+        formData.append('name',newUIdea.name)
+        formData.append('creatorId',user.currUser.id)
+        createIdea(formData).then(data=>{
+            fetchIdea().then(data=>projects.setIdea(data))
+            onHide()
+        })
         setNewIdea({name:''})
         onHide()
 

@@ -3,9 +3,9 @@ const bcrypt = require('bcrypt')
 const {User}=require('../models/models')
 const jwt = require('jsonwebtoken')
 
-const generateJwt=(id,email,role,fullName,name,telephone)=>{
+const generateJwt=(id,email,role,name,telephone)=>{
     return jwt.sign(
-        {id,email,role,fullName,name,telephone},
+        {id,email,role,name,telephone},
         process.env.SECRET_KEY,
         {
             expiresIn: '24h'
@@ -16,7 +16,7 @@ const generateJwt=(id,email,role,fullName,name,telephone)=>{
 
 class UserController{
     async registration(req,res,next){
-        const {email,password,role,name,telephone,resultStudy} = req.body
+        const {email,password,role,name,telephone} = req.body
         if(!email||!password){
             return next(ApiError.badRequest('Невірно вказана пошта або пароль'))
         }
@@ -27,8 +27,8 @@ class UserController{
             return next(ApiError.badRequest('Користувач з такою поштою вже є'))
         }
         const hashPassword = await bcrypt.hash(password,5)
-        const user = await User.create({email,password:hashPassword,role,name,telephone,resultStudy})
-        const token = generateJwt(user.id,user.email,user.role,user.name,user.resultStudy,user.telephone)
+        const user = await User.create({email,password:hashPassword,role,name,telephone})
+        const token = generateJwt(user.id,user.email,user.role,user.name,user.telephone)
         return res.json({token})
     }
     async login(req,res,next){
@@ -41,12 +41,17 @@ class UserController{
         if(!comparePassword){
             return next(ApiError.internal('Невірний пароль'))
         }
-        const token = generateJwt(user.id,user.email,user.role,user.name,user.resultStudy,user.telephone)
+        const token = generateJwt(user.id,user.email,user.role,user.name,user.telephone)
         return res.json({token})
     }
     async check(req,res,next) {
-        const token = generateJwt(req.user.id,req.user.email,req.user.role,req.user.fullName,req.user.name,req.user.telephone)
+        const token = generateJwt(req.user.id,req.user.email,req.user.role,req.user.name,req.user.telephone)
         return res.json({token})
+    }
+    async getAll(req,res,next) {
+        let user
+        user = await User.findAll()
+        return res.json(user)
     }
 }
 module.exports = new UserController()

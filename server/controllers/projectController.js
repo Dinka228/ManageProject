@@ -6,8 +6,8 @@ const uuid = require('uuid')
 class ProjectController{
     async create(req,res,next){
         try{
-            const {name,curatorId,progress,customerId} = req.body
-
+            const {name,curatorId,customerId} = req.body
+            const progress = 'In Progress'
             const project = await Project.create({name,curatorId,progress,customerId})
 
             return res.json(project)

@@ -19,10 +19,6 @@ const TrItem = observer(({project}) => {
             <td>{project.progress}</td>
             {
                 user.currUser.role === 'ADMIN' ?<td>
-                    <MDBBtn type="submit" color="danger">
-                        Delete
-                    </MDBBtn>
-
                     <MDBBtn type="submit" color="success" className="ms-1">
                         Finished
                     </MDBBtn>

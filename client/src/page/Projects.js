@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     MDBBtn,
     MDBCard,
@@ -13,11 +13,25 @@ import {
 } from "mdb-react-ui-kit";
 import {Context} from "../index";
 import TrItem from "../component/projects/TrItem";
+import Admin from "../component/Modals/admin/admin";
+import {observer} from "mobx-react-lite";
+import CreateNewUser from "../component/Modals/admin/createNewUser";
+import CreateProject from "../component/Modals/admin/createProject";
+import {fetchProject} from "../http/projectAPI";
+import {useHistory} from "react-router-dom";
+import {LOGIN_ROUTE} from "../utils/consts";
 
-const Projects = () => {
+const Projects = observer(() => {
     const {user} = useContext(Context)
     const {projects} = useContext(Context)
-
+    const history = useHistory()
+    const [searchCheck,setSearchCheck]=useState("")
+    useEffect(()=>{
+        if(!user.isAuth){
+            history.push(LOGIN_ROUTE)
+        }
+        fetchProject().then(data=>projects.setProject(data))
+    },[])
     return (
         <section className="vh-100" style={{ backgroundColor: "#eee" }}>
             <MDBContainer className="py-5 h-100">
@@ -32,6 +46,9 @@ const Projects = () => {
                                             label="Enter a project here"
                                             id="form1"
                                             type="text"
+                                            onChange={e=>{
+                                                setSearchCheck(e.target.value)
+                                            }}
                                         />
                                     </MDBCol>
                                     <MDBCol size="12">
@@ -52,7 +69,18 @@ const Projects = () => {
                                     </MDBTableHead>
                                     <MDBTableBody>
                                         {
-                                            projects.project.map(project=>
+                                            projects.project.filter(projectFilter=>{
+                                                if (searchCheck === "") {
+                                                    return projectFilter
+                                                } else if (searchCheck !== "") {
+                                                    if (projectFilter.name.startsWith(searchCheck)) {
+                                                        return projectFilter
+                                                    }
+                                                }
+                                                else{
+                                                    return projectFilter
+                                                }
+                                            }).map(project=>
                                                 <TrItem key={project.id} project={project}/>
                                             )
 
@@ -63,9 +91,18 @@ const Projects = () => {
                         </MDBCard>
                     </MDBCol>
                 </MDBRow>
+                <Admin show={projects.showAdmin} onHide={()=>{
+                    projects.setShowAdmin(false)
+                }}/>
+                <CreateNewUser show={projects.showCreateUser} onHide={()=>{
+                    projects.setShowCreateUser(false)
+                }}/>
+                <CreateProject show={projects.showCreateProject} onHide={()=>{
+                    projects.setShowCreateProject(false)
+                }}/>
             </MDBContainer>
         </section>
     );
-};
+});
 
 export default Projects;

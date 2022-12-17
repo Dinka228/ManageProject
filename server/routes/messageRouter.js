@@ -4,6 +4,6 @@ const messageController = require('../controllers/messageController')
 const checkRole = require('../middleware/checkRoleMiddleware')
 
 router.post('/',messageController.create)
-router.get('/:getWorkerId',messageController.getAll)
+router.get('/:gerWorkerId/:creatorWorkerId',messageController.getAll)
 
 module.exports = router

@@ -1,8 +1,8 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     MDBBtn,
     MDBCard,
-    MDBCardBody, MDBCardImage, MDBCardText,
+    MDBCardBody, MDBCardHeader, MDBCardImage, MDBCardText,
     MDBCheckbox,
     MDBCol,
     MDBContainer, MDBIcon,
@@ -14,17 +14,41 @@ import {
     MDBTabsContent,
     MDBTabsItem,
     MDBTabsLink,
-    MDBTabsPane, MDBTypography,
+    MDBTabsPane, MDBTextArea, MDBTypography,
 } from "mdb-react-ui-kit";
 import {observer} from "mobx-react-lite";
 import TrItem from "./TrItem";
 import {Context} from "../../index";
 import TrItemForTasks from "./TrItemForTasks";
 import TrItemForPersonalTasks from "./TrItemForPersonalTasks";
+import {fetchOneUserTask} from "../../http/taskAPI";
+import {createIdeaMessage, fetchOneIdeaMessage} from "../../http/ideaMessageAPI";
+import {createMessage, fetchOneMessage} from "../../http/messageAPI";
 
 const PersonalBoard = observer(() => {
     const {user} = useContext(Context)
     const {projects} = useContext(Context)
+    useEffect(()=>{
+         fetchOneUserTask(user.currUser.id).then(data=>projects.setTasks(data))
+        },[]
+    )
+    const [newMessage,setNewMessage] = useState({text:""})
+    const [searchCheck,setSearchCheck]=useState("")
+    function addNewMessage(){
+        const newUMessage={
+            ...newMessage
+
+        }
+        const formData = new FormData()
+        formData.append('text',newUMessage.text)
+        formData.append('creatorWorkerId',user.currUser.id)
+        formData.append('gerWorkerId',user.currMessageUser.id)
+        createMessage(formData).then(data=>{
+            fetchOneMessage(user.currUser.id,user.currMessageUser.id).then(data=>projects.setMessage(data))
+        })
+        setNewMessage({text:''})
+
+    }
     return (
         <section className="vh-100" style={{ backgroundColor: "#eee" }}>
             <MDBContainer className="py-5 h-100">
@@ -39,10 +63,10 @@ const PersonalBoard = observer(() => {
                                             label="Enter a task here"
                                             id="form1"
                                             type="text"
+                                            onChange={e=>{
+                                                setSearchCheck(e.target.value)
+                                            }}
                                         />
-                                    </MDBCol>
-                                    <MDBCol size="12">
-                                        <MDBBtn type="submit">Search</MDBBtn>
                                     </MDBCol>
                                 </MDBRow>
                                 <MDBTable className="mb-4">
@@ -60,6 +84,13 @@ const PersonalBoard = observer(() => {
                                             projects.tasks.filter(taskFilter=>{
                                                 if(+taskFilter.curatorId === +user.currUser.id){
                                                     return taskFilter
+                                                }
+                                                else if (searchCheck === "") {
+                                                    return taskFilter
+                                                } else if (searchCheck !== "") {
+                                                    if (taskFilter.name.startsWith(searchCheck)) {
+                                                        return taskFilter
+                                                    }
                                                 }
                                             }).map(task=>
                                                 <TrItemForPersonalTasks key={task.id} task={task}/>
@@ -99,6 +130,100 @@ const PersonalBoard = observer(() => {
                                 </MDBCol>
                             </MDBRow>
                         </MDBCard>
+                    </MDBCol>
+                </MDBRow>
+                <MDBRow className="d-flex justify-content-between mt-4">
+                    <MDBCol md="6" lg="5" xl="4" className="mb-4 mb-md-0">
+                        <h5 className="font-weight-bold mb-3 text-center text-lg-start">
+                            Contacts
+                        </h5>
+
+                        <MDBCard>
+                            <MDBCardBody>
+                                <MDBTypography listUnStyled className="mb-0">
+                                    {
+                                        user.user.filter(userFilter=>{
+                                            if(userFilter.id !== user.currUser.id){
+
+                                                return userFilter
+                                            }
+                                        }).map(users=>
+                                            <li
+                                                className="p-2 border-bottom"
+                                                style={{ backgroundColor: "#eee" }}
+                                                onClick={()=>{
+                                                    user.setCurrentMessageUser(users)
+                                                    console.log(user.currMessageUser)
+                                                    fetchOneMessage(user.currUser.id,user.currMessageUser.id).then(data=>projects.setMessage(data))
+                                                }
+                                                }
+
+                                            >
+                                                <a href="#!" className="d-flex justify-content-between">
+                                                    <div className="d-flex flex-row">
+                                                        <div className="pt-1">
+                                                            <p className="fw-bold mb-0">{users.name}</p>
+                                                            <p className="small text-muted">
+                                                                {users.role}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        )
+                                    }
+                                </MDBTypography>
+                            </MDBCardBody>
+                        </MDBCard>
+
+                    </MDBCol>
+                    <MDBCol md="6" lg="7" xl="8">
+                        <div  style={{overflow:"scroll", maxHeight:400}}>
+                            <MDBTypography listUnStyled>
+                                <h2>{user.currMessageUser.name ? user.currMessageUser.name : <div></div>}</h2>
+                                {
+                                    projects.messages.filter(messageFilter=>{
+                                        if(+messageFilter.creatorWorkerId === +user.currMessageUser.id || +messageFilter.gerWorkerId === +user.currMessageUser.id){
+                                            return messageFilter
+                                        }
+                                    }).map(message=>
+                                        <li className="d-flex justify-content-between mb-4">
+                                            {
+                                                    <MDBCard>
+                                                        <MDBCardHeader className="d-flex justify-content-between p-3">
+                                                            <p className="fw-bold mb-0">{user.user.filter(users=>{
+                                                                if(+users.id === +message.creatorWorkerId){
+                                                                    return users
+                                                                }
+                                                            }).map(userss => <div>{userss.name}</div>)}</p>
+                                                        </MDBCardHeader>
+                                                        <MDBCardBody>
+                                                            <p className="mb-0">
+                                                                {message.text}
+                                                            </p>
+                                                        </MDBCardBody>
+                                                    </MDBCard>
+
+                                            }
+
+                                        </li>
+                                    )
+                                }
+
+
+                            </MDBTypography>
+                        </div>
+                        <li className="bg-white mb-3">
+                        <MDBTextArea label="Message" id="textAreaExample" rows={4}
+                                     value={newMessage.text}
+                                     onChange={e=>setNewMessage({...newMessage, text: e.target.value})}
+                        />
+                    </li>
+                        <MDBBtn color="info" rounded className="float-end" onClick={()=>{
+                            addNewMessage()
+                        }}>
+                            Send
+                        </MDBBtn>
                     </MDBCol>
                 </MDBRow>
             </MDBContainer>

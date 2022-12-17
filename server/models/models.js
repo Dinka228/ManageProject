@@ -8,11 +8,7 @@ const User = sequelize.define('user',{
     password:{type:DataTypes.STRING},
     role:{type:DataTypes.STRING,defaultValue:"USER"},
     telephone:{type:DataTypes.INTEGER,unique: true},
-    resultStudy:{type:DataTypes.STRING},
-    profActivity:{type:DataTypes.INTEGER, defaultValue: 0},
-    workInProject:{type:DataTypes.INTEGER, defaultValue: 0},
-    loyalty:{type:DataTypes.INTEGER, defaultValue: 0},
-    countTask:{type:DataTypes.INTEGER, defaultValue: 0}
+    countTask:{type:DataTypes.INTEGER,defaultValue: 0}
 })
 const Project = sequelize.define('project',{
     id:{type:DataTypes.INTEGER,primaryKey:true,autoIncrement:true},

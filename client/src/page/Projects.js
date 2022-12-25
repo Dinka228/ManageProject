@@ -70,16 +70,19 @@ const Projects = observer(() => {
                                     <MDBTableBody>
                                         {
                                             projects.project.filter(projectFilter=>{
-                                                if (searchCheck === "") {
-                                                    return projectFilter
-                                                } else if (searchCheck !== "") {
-                                                    if (projectFilter.name.startsWith(searchCheck)) {
+                                                if(+user.currUser.id === +projectFilter.customerId || +user.currUser.id === +projectFilter.curatorId || user.currUser.role === "ADMIN"){
+                                                    if (searchCheck === "") {
+                                                        return projectFilter
+                                                    } else if (searchCheck !== "") {
+                                                        if (projectFilter.name.startsWith(searchCheck)) {
+                                                            return projectFilter
+                                                        }
+                                                    }
+                                                    else{
                                                         return projectFilter
                                                     }
                                                 }
-                                                else{
-                                                    return projectFilter
-                                                }
+
                                             }).map(project=>
                                                 <TrItem key={project.id} project={project}/>
                                             )

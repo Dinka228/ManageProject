@@ -8,5 +8,6 @@ router.get('/:projectId',taskController.getAll)
 router.get('/:curatorId',taskController.getUserTask)
 router.post('/:id/:projectId',taskController.getFinishTask)
 router.post('/:id/:curatorId',taskController.finishTask)
+router.post('/update',taskController.update)
 
 module.exports = router

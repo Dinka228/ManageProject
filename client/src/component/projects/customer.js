@@ -144,6 +144,12 @@ const Customer = observer(() => {
                                             <li
                                                 className="p-2 border-bottom"
                                                 style={{ backgroundColor: "#eee" }}
+                                                onClick={()=>{
+                                                    user.setCurrentMessageUser(users)
+                                                    console.log(user.currMessageUser)
+                                                    fetchOneMessage(user.currUser.id,user.currMessageUser.id).then(data=>projects.setMessage(data))
+                                                }
+                                                }
 
                                             >
                                                 <a href="#!" className="d-flex justify-content-between">

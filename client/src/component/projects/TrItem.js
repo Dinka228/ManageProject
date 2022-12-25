@@ -27,10 +27,11 @@ const TrItem = observer(({project}) => {
 
             <td>
                 {user.user.filter(users=>{
+                    console.log(users)
                     if(+users.id === +project.curatorId){
                         return users
                     }
-                }).map(userss => <div>{userss.name}</div>)}
+                }).map(userss =><div>{userss.name}</div>)}
             </td>
         </tr>
     );

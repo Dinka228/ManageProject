@@ -7,6 +7,7 @@ export default class UserStore{
         this._currentUser = {}
         this._currentProfile = {}
         this._currentMessageUser = {}
+        this._userProject = []
         makeAutoObservable(this)
     }
     setIsAuth(bool){
@@ -14,6 +15,9 @@ export default class UserStore{
     }
     setUser(user){
         this._users = user
+    }
+    setUserProject(userProject){
+        this._userProject = userProject
     }
     setCurrentUser(currUser){
         this._currentUser = currUser
@@ -29,6 +33,9 @@ export default class UserStore{
     }
     get user(){
         return this._users
+    }
+    get userProject(){
+        return this._userProject
     }
     get currUser(){
         return this._currentUser

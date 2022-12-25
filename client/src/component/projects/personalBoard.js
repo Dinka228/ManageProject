@@ -144,7 +144,6 @@ const PersonalBoard = observer(() => {
                                     {
                                         user.user.filter(userFilter=>{
                                             if(userFilter.id !== user.currUser.id){
-
                                                 return userFilter
                                             }
                                         }).map(users=>

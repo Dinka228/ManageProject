@@ -29,12 +29,23 @@ const NavBar = observer(() => {
         <Navbar bg="dark" expand="lg">
             {
                 user.isAuth ? <Container>
-                    <Navbar.Brand  style={{cursor:"pointer", color:"white"}} onClick={()=>history.push(PROJECTS_ROUTE)}>Project management</Navbar.Brand>
+                    <Navbar.Brand  style={{cursor:"pointer", color:"white"}} onClick={()=>{
+                        projects.setForumPage(false)
+                        projects.setProjectPage(false)
+                        projects.setProfilePage(false)
+                        projects.setDiagramPage(false)
+                        projects.setCustomer(false)
+                        history.push(PROJECTS_ROUTE)
+                    }}>Project management</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto" >
                             {
-                                user.currUser.role === 'ADMIN' ?
+                                user.currUser.role === 'ADMIN' && !projects.forumPage
+                                && !projects.projectPage
+                                && !projects.profilePage
+                                && !projects.customer
+                                && !projects.diagramPage ?
                                     <Nav.Link style={{color:"white"}} onClick={()=>{
                                         projects.setShowAdmin(true)
                                 }

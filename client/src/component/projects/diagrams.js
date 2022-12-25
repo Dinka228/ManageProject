@@ -10,13 +10,28 @@ let countComplete = 0
 const Diagrams = observer(() => {
     const {user} = useContext(Context)
     const {projects} = useContext(Context)
+
     const dataTask = user.user
+    const dataProgress = [
+        {name: 'In Progress', count: 0},
+        {name: 'Finished', count: 0}
+    ];
+    projects.tasks.filter(task=>{
+        if(+task.projectId === +projects.currProject.id){
+            if(task.progress === 'In Progress'){
+                dataProgress[0].count++
+            }
+            else if(task.progress === 'Finished'){
+                dataProgress[1].count++
+            }
+        }
+    })
     return (
         <MDBContainer>
             <MDBRow md={12}>
                 <MDBCol md={6}>
                     <h2 className='d-flex justify-content-center align-items-center'>CountProgress</h2>
-                    <DiagramAboutCountProgressComplete/>
+                    <DiagramAboutCountProgressComplete data={dataProgress}/>
                 </MDBCol>
                 <MDBCol md={6}>
                     <h2 className='d-flex justify-content-center align-items-center'>CountTask</h2>

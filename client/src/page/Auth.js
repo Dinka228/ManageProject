@@ -15,13 +15,14 @@ import {
     from 'mdb-react-ui-kit';
 import {login, registration} from "../http/userAPI";
 import {observer} from "mobx-react-lite";
-import {PROJECTS_ROUTE} from "../utils/consts";
+import {PROJECTS_PAGE_ROUTE, PROJECTS_ROUTE} from "../utils/consts";
 import {Context} from "../index";
 import {useHistory} from "react-router-dom";
 
 const Auth = observer(() => {
     const [User, setUser] = useState({email:"",password:""})
     const {user} = useContext(Context)
+    const {projects} = useContext(Context)
     const history = useHistory()
     const signIn = (e) =>{
             const Users={
@@ -30,9 +31,9 @@ const Auth = observer(() => {
             }
             const log = async ()=>{
                 const response = await login(Users.email,Users.password)
-                console.log(response)
                 user.setCurrentUser(response)
                 user.setIsAuth(true)
+                console.log(user.currUser.role)
                 history.push(PROJECTS_ROUTE)
             }
             log()

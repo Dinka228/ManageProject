@@ -14,8 +14,9 @@ import DropdownItem from "react-bootstrap/DropdownItem";
 import {Context} from "../../../index";
 import {registration} from "../../../http/userAPI";
 import {createProject, fetchProject} from "../../../http/projectAPI";
+import {observer} from "mobx-react-lite";
 
-const CreateProject = ({show,onHide}) => {
+const CreateProject = observer(({show,onHide}) => {
     const [newProject, setNewProject] = useState({name:''})
     const [selectPeople,setSelectPeople] = useState({})
     const [selectCustomerPeople,setSelectCustomerPeople] = useState({})
@@ -111,6 +112,6 @@ const CreateProject = ({show,onHide}) => {
             </MDBModal>
         </>
     );
-};
+});
 
 export default CreateProject;

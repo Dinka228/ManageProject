@@ -46,5 +46,12 @@ class TaskController{
         })
         return res.json(updateTask)
     }
+    async update(req,res){
+        const {taskId,curatorId,answer} = req.body
+        await Task.update({curatorId:curatorId,answer:answer},{where:{id:taskId}})
+        const updateCountTask = await User.findOne({where:{id:taskId}})
+
+        return res.json(updateCountTask)
+    }
 }
 module.exports = new TaskController()

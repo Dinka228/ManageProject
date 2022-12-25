@@ -61,19 +61,26 @@ const SideBar = () => {
                                 Forum
                             </MDBListGroupItem>
                         </MDBRipple>
+                        {
+                            user.currUser.role === 'Customer'
+                            ?
+                                <div></div>
+                                :
+                                <MDBRipple rippleTag='span'>
+                                    <MDBListGroupItem tag='a' href='#' action className='mt-4 border-0 border-bottom rounded'onClick={()=>{
+                                        projects.setForumPage(false)
+                                        projects.setProjectPage(false)
+                                        projects.setProfilePage(true)
+                                        projects.setCustomer(false)
+                                        projects.setDiagramPage(false)
+                                    }}>
+                                        <MDBIcon fas icon="lock me-1" />
+                                        Personal Dashboard
+                                    </MDBListGroupItem>
+                                </MDBRipple>
 
-                        <MDBRipple rippleTag='span'>
-                            <MDBListGroupItem tag='a' href='#' action className='mt-4 border-0 border-bottom rounded'onClick={()=>{
-                                projects.setForumPage(false)
-                                projects.setProjectPage(false)
-                                projects.setProfilePage(true)
-                                projects.setCustomer(false)
-                                projects.setDiagramPage(false)
-                            }}>
-                                <MDBIcon fas icon="lock me-1" />
-                                Personal Dashboard
-                            </MDBListGroupItem>
-                        </MDBRipple>
+                        }
+
 
                         <MDBRipple rippleTag='span'>
                             <MDBListGroupItem tag='a' href='#' action className='mt-4 border-0 border-bottom rounded'onClick={()=>{

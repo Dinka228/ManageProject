@@ -25,3 +25,7 @@ export const finishTaskUser = async(id,curatorId)=>{
     const {data} = await $authHost.post(`api/task/${id}/${curatorId}`)
     return data
 }
+export const updateTask = async(updateData)=>{
+    const {data} = await $authHost.post(`api/task/update`,updateData)
+    return data
+}

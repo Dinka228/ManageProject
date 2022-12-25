@@ -55,10 +55,16 @@ const TrItemForTasks = observer(({task}) => {
                 </h6>
             </td>
             {
-                +projects.currProject.curatorId === +user.currUser.id || user.currUser.role === 'ADMIN' ?
+                +projects.currProject.curatorId === +user.currUser.id || user.currUser.role === 'ADMIN' || user.currUser.role === 'Customer' ?
                     <td className="align-middle">
                     <MDBBtn type="submit" className="ms-1" color="secondary" onClick={()=>{
-                        projects.setCurrTask(task)
+                        if(projects.currTask.name){
+                            projects.setCurrTask({})
+                        }
+                        else{
+                            projects.setCurrTask(task)
+                        }
+
                     }}>
                         Show
                     </MDBBtn>
